@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.local
+.firebase/
+firebase-debug.log
+# Firebase web config and App Check debug tokens stay out of the tree
+src/firebase-config.local.*
+firebase-config.local.json
+firebase-config.json
+!firebase-config.example.json
+test-results/
