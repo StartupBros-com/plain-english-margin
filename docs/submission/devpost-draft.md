@@ -1,6 +1,6 @@
 # Devpost draft: Plain-English Margin
 
-Draft text for the owner to review and edit. It makes no claim about the entrant's background. Fill in the links after the repository is public and the video is uploaded. Do not state that on-device inference works until it has been seen working in desktop Chrome with Gemini Nano.
+Text for the Devpost form. It makes no claim about the entrant's background. Fill in the video and demo links once they exist. Do not state that on-device inference works until it has been seen working in desktop Chrome with Gemini Nano.
 
 ## Tagline
 
@@ -23,7 +23,7 @@ The app calls Gemini through the Firebase AI Logic hybrid web SDK (`firebase/ai`
 - **On-device failure:** the app retries once in the cloud and labels the answer that way.
 - **Structured output:** one JSON schema, passed as `onDeviceParams.promptOptions.responseConstraint` for the on-device model and as `inCloudParams.generationConfig.responseSchema` for the cloud model.
 - **Honest labels:** the badge reads `inferenceSource` from the SDK's own response rather than assuming where the answer came from.
-- **App Check** is on, using the debug provider during development because reCAPTCHA does not run in a Manifest V3 extension.
+- **App Check** protects every model call: reCAPTCHA Enterprise on the hosted web page, and the debug provider in the extension, because reCAPTCHA does not run in a Manifest V3 extension.
 - **Optional sync:** Firebase Auth (anonymous) and Firestore can sync the list of known term names. It is a setting, off by default, and it never sends page text.
 
 The model's reply is never trusted blindly. A parser rejects any reply that misses schema fields, answers a different word than the one asked, or names a word that is not in the page text. Those show as a plain "couldn't get a trustworthy answer" note.
@@ -40,7 +40,7 @@ A single code path that is honest about where each answer came from, a reader-ow
 
 ## What is next
 
-Real-model evaluation of explanation quality, a production App Check provider, more languages, and sites that stream text in as it is generated.
+Real-model evaluation of explanation quality, App Check for the extension without a debug token, more languages, and sites that stream text in as it is generated.
 
 ## Built with
 
@@ -48,10 +48,11 @@ TypeScript, Vite, Firebase AI Logic (`firebase/ai`), Firebase App Check, Firebas
 
 ## AI tools used to build it
 
-Claude Code wrote the code at the entrant's direction. All of it was written during the Submission Period, starting 2026-11-18.
+Claude Code (Anthropic) wrote the code, the docs and the demo video's narration script, all during the Submission Period, starting 2026-11-18. The video's voice is synthetic: Piper TTS with the en_US-joe-medium voice, run locally.
 
 ## Links
 
-- Repository: TODO (owner makes it public)
-- Video: TODO (owner uploads)
+- Repository: https://github.com/StartupBros-com/plain-english-margin
+- Video: TODO (YouTube link after upload)
+- Hosted demo: TODO (link after deploy)
 - Try it: load `dist/extension` unpacked, or open the web app; see the README

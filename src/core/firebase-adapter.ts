@@ -1,5 +1,5 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { CustomProvider, initializeAppCheck } from 'firebase/app-check';
+import { CustomProvider, ReCaptchaEnterpriseProvider, initializeAppCheck } from 'firebase/app-check';
 import {
   getAI,
   getGenerativeModel,
@@ -9,7 +9,7 @@ import {
   type GenerativeModel,
   type AI,
 } from 'firebase/ai';
-import { DEFAULT_CLOUD_MODEL, type AppConfig } from './config';
+import { appCheckMode, DEFAULT_CLOUD_MODEL, type AppConfig } from './config';
 import { LOOKUP_SYSTEM } from './prompts';
 import { LOOKUP_SCHEMA } from './schema';
 import type { InferenceAdapter, InferenceRequest, InferenceResult, OnDeviceStatus, RouteMode } from './types';
@@ -30,22 +30,26 @@ const MODE_MAP: Record<RouteMode, (typeof InferenceMode)[keyof typeof InferenceM
   'only-in-cloud': InferenceMode.ONLY_IN_CLOUD,
 };
 
-/** One Firebase app per page. App Check runs with the debug provider (see README). */
+/** One Firebase app per page. App Check uses reCAPTCHA Enterprise on a hosted page, the debug provider elsewhere (see README). */
 export function initFirebase(config: AppConfig): FirebaseApp {
   const app = initializeApp(config.firebase);
+  initializeAppCheck(app, { provider: appCheckProvider(config), isTokenAutoRefreshEnabled: true });
+  return app;
+}
+
+function appCheckProvider(config: AppConfig): ReCaptchaEnterpriseProvider | CustomProvider {
+  if (appCheckMode(config) === 'recaptcha-enterprise' && config.recaptchaSiteKey) {
+    return new ReCaptchaEnterpriseProvider(config.recaptchaSiteKey);
+  }
   // Debug mode: the SDK prints a token to the console, or uses the one you set. Register it in the Firebase console.
   (globalThis as { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean | string }).FIREBASE_APPCHECK_DEBUG_TOKEN =
     config.appCheckDebugToken ?? true;
-  initializeAppCheck(app, {
-    // reCAPTCHA cannot run inside a Manifest V3 extension, and debug mode never asks this provider for a token.
-    provider: new CustomProvider({
-      getToken: async () => {
-        throw new Error('No production App Check provider is configured. Use the debug token during development.');
-      },
-    }),
-    isTokenAutoRefreshEnabled: true,
+  // reCAPTCHA cannot run inside a Manifest V3 extension, and debug mode never asks this provider for a token.
+  return new CustomProvider({
+    getToken: async () => {
+      throw new Error('No production App Check provider is configured. Use the debug token during development.');
+    },
   });
-  return app;
 }
 
 /** The production adapter: Firebase AI Logic hybrid inference. */

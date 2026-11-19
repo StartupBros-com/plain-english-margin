@@ -5,7 +5,8 @@ const VOICE =
 
 export const LOOKUP_SYSTEM =
   `${VOICE} Reply with JSON only. "term" must repeat the term exactly as given. ` +
-  '"plain" is ONE sentence that fits the sentence the term appears in. ' +
+  '"plain" is ONE sentence that says what the term means, as it is used in the sentence it appears in. ' +
+  'Explain the term itself. Do not rewrite, retell or summarise the sentence. ' +
   '"why" is optional: one short line on why it matters in this spot.';
 
 export const WALKTHROUGH_SYSTEM =
