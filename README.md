@@ -6,6 +6,9 @@ It is a Chrome extension (Manifest V3) and a web app that share one core. It is 
 
 Entry for Google's #BuildHybridAI 2026. Licence: Apache-2.0.
 
+- **Try it:** https://startupbros-com.github.io/plain-english-margin-demo/ (the web app with a made-up conversation; no sign-in)
+- **Demo video (1:45):** https://youtu.be/ugyyq-dxL5I
+
 ![Hover card from a real cloud run](docs/screenshots/real-cloud-1-hover-card.png)
 
 This screenshot is from a real run: Gemini in the cloud wrote the card, and the badge says so. The browser had no on-device model. The older layout screenshots use a stand-in model. See [docs/screenshots/README.md](docs/screenshots/README.md).
@@ -42,7 +45,7 @@ A reply must also pass a parser ([`src/core/schema.ts`](src/core/schema.ts)) bef
 
 ## Setup
 
-Requirements: Node 24, pnpm, desktop Chrome 139 or newer for the on-device path (the cloud path works in any browser).
+Requirements: Node 24, pnpm, and for the on-device path desktop Chrome 148 or newer for the web app, or 138 or newer for the extension (the versions where Chrome's Prompt API docs list it for web pages and for extensions). The cloud path works in any browser.
 
 ```sh
 pnpm install
@@ -52,7 +55,7 @@ pnpm build        # produces dist/web and dist/extension
 
 ### 1. Turn on Chrome's on-device model
 
-1. Use desktop Chrome 139+. The Prompt API needs a Windows 10/11, macOS 13+ or Linux machine with enough free disk (Chrome's docs say at least 22 GB) and a capable GPU or CPU.
+1. Use desktop Chrome 148+ (138+ is enough for the extension). The Prompt API needs a Windows 10/11, macOS 13+ or Linux machine with enough free disk (Chrome's docs say at least 22 GB) and a capable GPU or CPU.
 2. Open `chrome://flags/#prompt-api-for-gemini-nano-multimodal-input`, set it to **Enabled**, and restart Chrome.
 3. In DevTools on any page, run `await LanguageModel.availability()`. If it says `downloadable`, run `await LanguageModel.create()` (it needs a click or key press first) and wait for the download. You can also use the **Settings** tab in the app once it is set up: "Get the on-device model".
 
@@ -119,7 +122,7 @@ The Prompt API is reached through the Firebase SDK, which needs a document (not 
 
 ## Known limits
 
-- No real model has been run in this build environment. Nothing here shows Gemini Nano output.
+- Gemini Nano has not run on any machine used to build or test this. Nothing here shows its output; every observed answer came from cloud Gemini.
 - The first on-device request can wait on a model download. The card shows a short "looking that up" state.
 - Offline use with Nano relies on the on-device path needing no network. That is the design and is not yet observed.
 - Highlighting is by text node, so a term split across inline elements is missed.

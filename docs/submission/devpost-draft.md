@@ -1,6 +1,6 @@
 # Devpost draft: Plain-English Margin
 
-Text for the Devpost form. It makes no claim about the entrant's background. Fill in the video and demo links once they exist. Do not state that on-device inference works until it has been seen working in desktop Chrome with Gemini Nano.
+Text for the Devpost form. It makes no claim about the entrant's background. Do not state that on-device inference works until it has been seen working in desktop Chrome with Gemini Nano.
 
 ## Tagline
 
@@ -53,6 +53,6 @@ Claude Code (Anthropic) wrote the code, the docs and the demo video's narration 
 ## Links
 
 - Repository: https://github.com/StartupBros-com/plain-english-margin
-- Video: TODO (YouTube link after upload)
-- Hosted demo: TODO (link after deploy)
-- Try it: load `dist/extension` unpacked, or open the web app; see the README
+- Video: https://youtu.be/ugyyq-dxL5I
+- Hosted demo: https://startupbros-com.github.io/plain-english-margin-demo/
+- Extension: build it with your own Firebase config and load `dist/extension` unpacked; see the README

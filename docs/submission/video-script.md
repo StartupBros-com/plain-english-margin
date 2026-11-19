@@ -1,12 +1,14 @@
 # Demo video (1:45, limit 3:00)
 
+Published at https://youtu.be/ugyyq-dxL5I.
+
 The submitted video is a screen recording of a real run, with narration written to what is on screen. It shows only the app and its code, and nothing about the entrant.
 
 ## How it was made
 
 1. The web app was served with a hosted-style config: a real Firebase project, App Check through reCAPTCHA Enterprise, and no debug token.
 2. `node scripts/record-demo.mjs http://localhost:5198/` drove headless Chromium through the scenes below and saved `dist/video/footage.webm`, the scene start times and the HTTP status of every Firebase call. The run made one App Check exchange and four model calls, and all five returned 200.
-3. The narration lines in [`narration.json`](narration.json) were turned into speech with [Piper](https://github.com/OHF-Voice/piper1-gpl), run locally, one WAV per line. The voice is `en_US-joe-medium`, whose model card lists its training data as CC0. Where a line has a `say` field, Piper reads that spelling instead ("lock file"), and the captions keep `text`. No human voice is used.
+3. The narration lines in [`narration.json`](narration.json) were turned into speech with [Piper](https://github.com/OHF-Voice/piper1-gpl), run locally by [`scripts/tts.py`](../../scripts/tts.py), one WAV per line. The voice is `en_US-joe-medium`, whose model card lists its training data as CC0. Where a line has a `say` field, Piper reads that spelling instead ("lock file"), and the captions keep `text`. No human voice is used.
 4. `node scripts/make-video.mjs <wav-dir>` placed each line at the start of its scene, failed if any line ran into the next scene, burned the same lines in as captions below the footage, and wrote `dist/video/plain-english-margin-demo.mp4`.
 5. The audio of the final cut was transcribed with Whisper (`small.en`, local) and compared word by word with `narration.json`: 98.7% of words matched. The only differences were "lock file" for "lockfile" and "the" for "this".
 
