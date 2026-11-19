@@ -36,7 +36,8 @@ A reply must also pass a parser ([`src/core/schema.ts`](src/core/schema.ts)) bef
 
 - **Real:** the Firebase AI Logic hybrid code path (`firebase/ai`: `getAI`, `getGenerativeModel` with `InferenceMode`, structured output) in [`src/core/firebase-adapter.ts`](src/core/firebase-adapter.ts), App Check wiring, the detection, known-terms, routing, parsing and sync logic, and both UIs.
 - **Tests:** `pnpm test` covers routing, parsing, detection, the known-terms list and sync logic through an injected fake adapter. **They do not show that any model ran.**
-- **Not yet observed:** this build has not been run against a real Firebase project, and on-device inference has not been observed in desktop Chrome with Gemini Nano. Do not read anything here as a claim that it has. The first step for the owner is the checklist below.
+- **Observed against a real Firebase project (2026-11-19, headless Chromium, so no on-device model):** the App Check debug-token exchange returned 200, and a term lookup and a walkthrough each returned 200 from `gemini-3.5-flash-lite` through Firebase AI Logic, with the badge reading "In the cloud · Gemini". `node scripts/live-check.mjs` repeats this check and prints only HTTP statuses and the on-screen text.
+- **Not yet observed:** on-device inference with Gemini Nano in desktop Chrome. Do not read anything here as a claim that it has run.
 - **Screenshots** use `?adapter=fake`, which returns canned sample answers and labels them "no model ran".
 
 ## Setup
