@@ -1,0 +1,12 @@
+[
+  {"scene": "title", "text": "AI coding agents write long transcripts, full of words like lockfile, rebase and race condition. If you are not an engineer, that is hard to follow."},
+  {"scene": "app", "text": "Plain-English Margin underlines the jargon as you read."},
+  {"scene": "card:race condition", "text": "Hover a word, and you get one plain sentence, written for this sentence, and why it matters here."},
+  {"scene": "card:lockfile", "text": "The badge always says which model answered, and why. This browser has no on-device model, so Gemini in the cloud answered."},
+  {"scene": "know:lockfile", "text": "Press, I know this, and the word stops being underlined."},
+  {"scene": "walkthrough:ready", "text": "What just happened, turns the whole thread into a short summary and numbered steps. Long text goes straight to the cloud, and the panel says so."},
+  {"scene": "tab:terms", "text": "The words you know are listed here, and you can undo any of them."},
+  {"scene": "tab:settings", "text": "Sync is off by default, and only ever shares that word list. Settings also show whether Gemini Nano is available in this browser."},
+  {"scene": "code", "text": "Under the hood, one Firebase A.I. Logic model handles both paths. A router picks prefer on device for short text, and cloud only for long text. The badge reads the S.D.K.'s own inference source, and App Check protects every call."},
+  {"scene": "close", "text": "Plain-English Margin. A Chrome extension and a web app, open source under Apache 2.0."}
+]

@@ -6,9 +6,9 @@ It is a Chrome extension (Manifest V3) and a web app that share one core. It is 
 
 Entry for Google's #BuildHybridAI 2026. Licence: Apache-2.0.
 
-![Hover card](docs/screenshots/desktop-1-hover-card.png)
+![Hover card from a real cloud run](docs/screenshots/real-cloud-1-hover-card.png)
 
-These screenshots use a stand-in model, not a real one. See [docs/screenshots/README.md](docs/screenshots/README.md).
+This screenshot is from a real run: Gemini in the cloud wrote the card, and the badge says so. The browser had no on-device model. The older layout screenshots use a stand-in model. See [docs/screenshots/README.md](docs/screenshots/README.md).
 
 ## What it does
 
@@ -38,7 +38,7 @@ A reply must also pass a parser ([`src/core/schema.ts`](src/core/schema.ts)) bef
 - **Tests:** `pnpm test` covers routing, parsing, detection, the known-terms list and sync logic through an injected fake adapter. **They do not show that any model ran.**
 - **Observed against a real Firebase project (2026-11-19, headless Chromium, so no on-device model):** the App Check debug-token exchange returned 200, and a term lookup and a walkthrough each returned 200 from `gemini-3.5-flash-lite` through Firebase AI Logic, with the badge reading "In the cloud · Gemini". `node scripts/live-check.mjs` repeats this check and prints only HTTP statuses and the on-screen text. The same run with a hosted-style config (a reCAPTCHA Enterprise site key and no debug token, served on `localhost`) also returned 200 for the App Check exchange and both model calls.
 - **Not yet observed:** on-device inference with Gemini Nano in desktop Chrome. Do not read anything here as a claim that it has run.
-- **Screenshots** use `?adapter=fake`, which returns canned sample answers and labels them "no model ran".
+- **Screenshots:** the `real-cloud-*` set and the demo video come from a real cloud run recorded by `scripts/record-demo.mjs`. The `desktop-*` and `mobile-*` sets use `?adapter=fake`, which returns canned sample answers and labels them "no model ran".
 
 ## Setup
 
