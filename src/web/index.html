@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Plain-English Margin</title>
+    <meta name="description" content="Explains the jargon in AI coding agent output as you read it." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23255f55'/%3E%3Cpath d='M9 10h14M9 16h9M9 22h12' stroke='%23fff' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./web.css" />
+  </head>
+  <body>
+    <a class="skip" href="#thread">Skip to the conversation</a>
+    <header class="top">
+      <div class="top-inner">
+        <p class="mark"><span class="mark-icon" aria-hidden="true"></span>Plain-English Margin</p>
+        <p id="mode-note" class="mode-note" hidden></p>
+      </div>
+    </header>
+    <main>
+      <section class="intro">
+        <h1>Read what your AI coding agent wrote, in plain English.</h1>
+        <p class="lede">Words that sound technical are underlined. Point at one for a one-line explanation. Press <strong>I know this</strong> and it stops being underlined.</p>
+        <p class="hint">Below is a made-up conversation, so you can try it. Nothing here is real.</p>
+      </section>
+      <article id="thread" class="thread" aria-label="Sample conversation"></article>
+      <details class="own">
+        <summary>Try it on your own text</summary>
+        <label for="own-text">Paste a transcript, pull request or runbook</label>
+        <textarea id="own-text" rows="6" placeholder="Paste text here. It stays in this tab; nothing is saved."></textarea>
+        <button id="own-go" type="button" class="own-btn">Show it with explanations</button>
+      </details>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
