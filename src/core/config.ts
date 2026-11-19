@@ -17,9 +17,25 @@ export interface AppConfig {
   cloudModel?: string;
   /** Optional fixed App Check debug token (development only). If absent, the SDK prints a fresh one to the console. */
   appCheckDebugToken?: string;
+  /** reCAPTCHA v3 site key for a hosted web page. Public by design; the secret key stays in the Firebase console. */
+  recaptchaSiteKey?: string;
 }
 
 export const DEFAULT_CLOUD_MODEL = 'gemini-3.5-flash-lite';
+
+const PLACEHOLDER = /^(OPTIONAL_|YOUR_)|PLACEHOLDER/i;
+
+function realString(v: unknown): string | undefined {
+  return typeof v === 'string' && v.length > 0 && !PLACEHOLDER.test(v) ? v : undefined;
+}
+
+/**
+ * Which App Check provider a page should use. A hosted page with a reCAPTCHA site key and no debug token
+ * uses reCAPTCHA v3; everything else (the extension, local development) uses the debug provider.
+ */
+export function appCheckMode(config: AppConfig): 'recaptcha-v3' | 'debug' {
+  return config.recaptchaSiteKey && !config.appCheckDebugToken ? 'recaptcha-v3' : 'debug';
+}
 
 export function parseAppConfig(raw: unknown): AppConfig | undefined {
   if (!raw || typeof raw !== 'object') return undefined;
@@ -33,10 +49,8 @@ export function parseAppConfig(raw: unknown): AppConfig | undefined {
   return {
     firebase: fb as unknown as FirebaseWebConfig,
     cloudModel: typeof o.cloudModel === 'string' ? o.cloudModel : undefined,
-    appCheckDebugToken:
-      typeof o.appCheckDebugToken === 'string' && !/^(OPTIONAL_|YOUR_)|PLACEHOLDER/i.test(o.appCheckDebugToken) && o.appCheckDebugToken
-        ? o.appCheckDebugToken
-        : undefined,
+    appCheckDebugToken: realString(o.appCheckDebugToken),
+    recaptchaSiteKey: realString(o.recaptchaSiteKey),
   };
 }
 

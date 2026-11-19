@@ -86,7 +86,15 @@ App Check is enforced for Firebase AI Logic. reCAPTCHA does not work inside a Ma
 4. For the extension, open `chrome://extensions`, find the extension, click **Inspect views: offscreen.html**, and copy the token printed there. The extension has its own origin, so it has its own token.
 5. Optional: put a token you registered into the config file as `appCheckDebugToken` so it stays the same between runs. Keep that file out of the repo.
 
-Never commit or share a debug token. Before any real release, switch to a production attestation provider.
+Never commit or share a debug token.
+
+**Hosting the web app for other people.** A debug token only works for the browser that registered it, so a hosted page uses reCAPTCHA v3 instead:
+
+1. Create a reCAPTCHA v3 key at [google.com/recaptcha/admin](https://www.google.com/recaptcha/admin/create) for the domain you will serve from.
+2. In the Firebase console, go to **Security > App Check > Apps**, choose the web app, register **reCAPTCHA** and paste the key's secret there. The secret stays in the console.
+3. Put the public site key into the hosted copy of `firebase-config.json` as `recaptchaSiteKey`, and leave `appCheckDebugToken` out of it. When the site key is present and no debug token is set, the app uses `ReCaptchaV3Provider`; otherwise it stays in debug mode. The extension always uses debug mode.
+
+Serve the hosted build from somewhere other than this repository, so the repository never holds a config file.
 
 ### 5. Run the web app
 
