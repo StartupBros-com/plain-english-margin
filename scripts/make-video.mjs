@@ -38,9 +38,11 @@ for (const c of cues) {
   const parts = words.length > 16 ? [words.slice(0, Math.ceil(words.length / 2)), words.slice(Math.ceil(words.length / 2))] : [words];
   const total = c.stop - c.start;
   let t = c.start;
-  for (const w of parts) {
+  for (const [k, w] of parts.entries()) {
     const d = (total * w.length) / words.length;
-    srt.push(`${srt.length + 1}\n${ts(t)} --> ${ts(Math.min(t + d + 0.15, c.stop + 0.4))}\n${w.join(' ').replace(/A\.I\./g, 'AI').replace(/S\.D\.K\./g, 'SDK')}\n`);
+    // Only the last part lingers; an earlier part ends exactly where the next begins, so two never show at once.
+    const stop = k === parts.length - 1 ? Math.min(t + d + 0.15, c.stop + 0.4) : t + d;
+    srt.push(`${srt.length + 1}\n${ts(t)} --> ${ts(stop)}\n${w.join(' ').replace(/A\.I\./g, 'AI').replace(/S\.D\.K\./g, 'SDK')}\n`);
     t += d;
   }
 }

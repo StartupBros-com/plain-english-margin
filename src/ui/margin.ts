@@ -373,7 +373,7 @@ export class Margin {
       h('strong', {}, String(shown)),
       ` underlined on this page · `,
       h('strong', {}, String(hidden)),
-      hidden === 1 ? ` hidden because you know it` : ` hidden because you know them`,
+      hidden === 1 ? ` place left plain because you know the word` : ` places left plain because you know the word`,
     );
     if (list.length === 0) {
       return [head, h('p', { class: 'empty', style: 'margin-top:12px' }, 'Nothing here yet. When you press “I know this” on a card, the word lands here and stops being highlighted.')];

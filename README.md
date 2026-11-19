@@ -131,7 +131,7 @@ Everything in this repository was built after the contest opened. The repository
 
 ## AI tools used
 
-Claude Code (Anthropic) wrote the code and docs at the entrant's direction. The app itself calls Gemini through Firebase AI Logic. Development tools: TypeScript, Vite, Vitest, ESLint, Playwright (for the screenshots).
+Claude Code (Anthropic) wrote the code, the docs and the demo video's narration script. The app itself calls Gemini through Firebase AI Logic. The video's voice is synthetic: Piper TTS with the `en_US-joe-medium` voice, run locally (see [docs/submission/video-script.md](docs/submission/video-script.md)). Development tools: TypeScript, Vite, Vitest, ESLint, Playwright (for the screenshots and the video footage), ffmpeg, Whisper (to check the narration against the script).
 
 ## Layout
 
