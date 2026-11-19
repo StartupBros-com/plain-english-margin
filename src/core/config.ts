@@ -17,7 +17,7 @@ export interface AppConfig {
   cloudModel?: string;
   /** Optional fixed App Check debug token (development only). If absent, the SDK prints a fresh one to the console. */
   appCheckDebugToken?: string;
-  /** reCAPTCHA v3 site key for a hosted web page. Public by design; the secret key stays in the Firebase console. */
+  /** reCAPTCHA (Fraud Defense, formerly reCAPTCHA Enterprise) site key for a hosted web page. Public by design. */
   recaptchaSiteKey?: string;
 }
 
@@ -31,10 +31,10 @@ function realString(v: unknown): string | undefined {
 
 /**
  * Which App Check provider a page should use. A hosted page with a reCAPTCHA site key and no debug token
- * uses reCAPTCHA v3; everything else (the extension, local development) uses the debug provider.
+ * uses reCAPTCHA Enterprise; everything else (the extension, local development) uses the debug provider.
  */
-export function appCheckMode(config: AppConfig): 'recaptcha-v3' | 'debug' {
-  return config.recaptchaSiteKey && !config.appCheckDebugToken ? 'recaptcha-v3' : 'debug';
+export function appCheckMode(config: AppConfig): 'recaptcha-enterprise' | 'debug' {
+  return config.recaptchaSiteKey && !config.appCheckDebugToken ? 'recaptcha-enterprise' : 'debug';
 }
 
 export function parseAppConfig(raw: unknown): AppConfig | undefined {

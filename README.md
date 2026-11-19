@@ -36,7 +36,7 @@ A reply must also pass a parser ([`src/core/schema.ts`](src/core/schema.ts)) bef
 
 - **Real:** the Firebase AI Logic hybrid code path (`firebase/ai`: `getAI`, `getGenerativeModel` with `InferenceMode`, structured output) in [`src/core/firebase-adapter.ts`](src/core/firebase-adapter.ts), App Check wiring, the detection, known-terms, routing, parsing and sync logic, and both UIs.
 - **Tests:** `pnpm test` covers routing, parsing, detection, the known-terms list and sync logic through an injected fake adapter. **They do not show that any model ran.**
-- **Observed against a real Firebase project (2026-11-19, headless Chromium, so no on-device model):** the App Check debug-token exchange returned 200, and a term lookup and a walkthrough each returned 200 from `gemini-3.5-flash-lite` through Firebase AI Logic, with the badge reading "In the cloud · Gemini". `node scripts/live-check.mjs` repeats this check and prints only HTTP statuses and the on-screen text.
+- **Observed against a real Firebase project (2026-11-19, headless Chromium, so no on-device model):** the App Check debug-token exchange returned 200, and a term lookup and a walkthrough each returned 200 from `gemini-3.5-flash-lite` through Firebase AI Logic, with the badge reading "In the cloud · Gemini". `node scripts/live-check.mjs` repeats this check and prints only HTTP statuses and the on-screen text. The same run with a hosted-style config (a reCAPTCHA Enterprise site key and no debug token, served on `localhost`) also returned 200 for the App Check exchange and both model calls.
 - **Not yet observed:** on-device inference with Gemini Nano in desktop Chrome. Do not read anything here as a claim that it has run.
 - **Screenshots** use `?adapter=fake`, which returns canned sample answers and labels them "no model ran".
 
@@ -88,11 +88,11 @@ App Check is enforced for Firebase AI Logic. reCAPTCHA does not work inside a Ma
 
 Never commit or share a debug token.
 
-**Hosting the web app for other people.** A debug token only works for the browser that registered it, so a hosted page uses reCAPTCHA v3 instead:
+**Hosting the web app for other people.** A debug token only works for the browser that registered it, so a hosted page uses reCAPTCHA (Google Cloud Fraud Defense, formerly reCAPTCHA Enterprise) instead:
 
-1. Create a reCAPTCHA v3 key at [google.com/recaptcha/admin](https://www.google.com/recaptcha/admin/create) for the domain you will serve from.
-2. In the Firebase console, go to **Security > App Check > Apps**, choose the web app, register **reCAPTCHA** and paste the key's secret there. The secret stays in the console.
-3. Put the public site key into the hosted copy of `firebase-config.json` as `recaptchaSiteKey`, and leave `appCheckDebugToken` out of it. When the site key is present and no debug token is set, the app uses `ReCaptchaV3Provider`; otherwise it stays in debug mode. The extension always uses debug mode.
+1. Create a score-based key at [google.com/recaptcha/admin](https://www.google.com/recaptcha/admin/create) in the same Google Cloud project as your Firebase project, for the domain you will serve from.
+2. In the Firebase console, go to **Security > App Check > Apps**, choose the web app, and register **Fraud Defense (formerly reCAPTCHA Enterprise)** with that site key. (Firebase marks the classic reCAPTCHA provider as deprecated.)
+3. Put the public site key into the hosted copy of `firebase-config.json` as `recaptchaSiteKey`, and leave `appCheckDebugToken` out of it. When the site key is present and no debug token is set, the app uses `ReCaptchaEnterpriseProvider`; otherwise it stays in debug mode. The extension always uses debug mode.
 
 Serve the hosted build from somewhere other than this repository, so the repository never holds a config file.
 

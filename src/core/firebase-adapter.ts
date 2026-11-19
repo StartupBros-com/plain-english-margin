@@ -1,5 +1,5 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { CustomProvider, ReCaptchaV3Provider, initializeAppCheck } from 'firebase/app-check';
+import { CustomProvider, ReCaptchaEnterpriseProvider, initializeAppCheck } from 'firebase/app-check';
 import {
   getAI,
   getGenerativeModel,
@@ -30,15 +30,17 @@ const MODE_MAP: Record<RouteMode, (typeof InferenceMode)[keyof typeof InferenceM
   'only-in-cloud': InferenceMode.ONLY_IN_CLOUD,
 };
 
-/** One Firebase app per page. App Check uses reCAPTCHA v3 on a hosted page, the debug provider elsewhere (see README). */
+/** One Firebase app per page. App Check uses reCAPTCHA Enterprise on a hosted page, the debug provider elsewhere (see README). */
 export function initFirebase(config: AppConfig): FirebaseApp {
   const app = initializeApp(config.firebase);
   initializeAppCheck(app, { provider: appCheckProvider(config), isTokenAutoRefreshEnabled: true });
   return app;
 }
 
-function appCheckProvider(config: AppConfig): ReCaptchaV3Provider | CustomProvider {
-  if (appCheckMode(config) === 'recaptcha-v3' && config.recaptchaSiteKey) return new ReCaptchaV3Provider(config.recaptchaSiteKey);
+function appCheckProvider(config: AppConfig): ReCaptchaEnterpriseProvider | CustomProvider {
+  if (appCheckMode(config) === 'recaptcha-enterprise' && config.recaptchaSiteKey) {
+    return new ReCaptchaEnterpriseProvider(config.recaptchaSiteKey);
+  }
   // Debug mode: the SDK prints a token to the console, or uses the one you set. Register it in the Firebase console.
   (globalThis as { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean | string }).FIREBASE_APPCHECK_DEBUG_TOKEN =
     config.appCheckDebugToken ?? true;

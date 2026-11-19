@@ -17,14 +17,14 @@ describe('parseAppConfig', () => {
     expect(parseAppConfig({ firebase: fb, appCheckDebugToken: '' })?.appCheckDebugToken).toBeUndefined();
     expect(parseAppConfig({ firebase: fb, appCheckDebugToken: 'abc-123' })?.appCheckDebugToken).toBe('abc-123');
   });
-  it('picks reCAPTCHA v3 only for a hosted config with a real site key and no debug token', () => {
+  it('picks reCAPTCHA Enterprise only for a hosted config with a real site key and no debug token', () => {
     const fb = { apiKey: 'k', authDomain: 'a', projectId: 'p', appId: 'i' };
     const hosted = parseAppConfig({ firebase: fb, recaptchaSiteKey: '6Lc-site-key' });
     expect(hosted?.recaptchaSiteKey).toBe('6Lc-site-key');
-    expect(hosted && appCheckMode(hosted)).toBe('recaptcha-v3');
+    expect(hosted && appCheckMode(hosted)).toBe('recaptcha-enterprise');
     const dev = parseAppConfig({ firebase: fb, recaptchaSiteKey: '6Lc-site-key', appCheckDebugToken: 'abc-123' });
     expect(dev && appCheckMode(dev)).toBe('debug');
-    const placeholder = parseAppConfig({ firebase: fb, recaptchaSiteKey: 'OPTIONAL_RECAPTCHA_V3_SITE_KEY_FOR_A_HOSTED_PAGE' });
+    const placeholder = parseAppConfig({ firebase: fb, recaptchaSiteKey: 'OPTIONAL_RECAPTCHA_SITE_KEY_FOR_A_HOSTED_PAGE' });
     expect(placeholder?.recaptchaSiteKey).toBeUndefined();
     expect(placeholder && appCheckMode(placeholder)).toBe('debug');
   });

@@ -15,7 +15,7 @@ const calls = [];
 page.on('response', (r) => {
   const u = new URL(r.url());
   if (/firebasevertexai|generativelanguage|firebaseappcheck|aiplatform/.test(u.host)) {
-    calls.push(`${r.status()} ${u.host}${u.pathname.replace(/[A-Za-z0-9_-]{30,}/g, '<id>')}`);
+    calls.push(`${r.status()} ${u.host}${u.pathname.replace(/\/apps\/.*:/, '/apps/<app>:').replace(/(?=[A-Za-z_-]*\d)[A-Za-z0-9_-]{30,}/g, '<id>')}`);
   }
 });
 const errors = [];
