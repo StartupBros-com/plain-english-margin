@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { countTerms, detectTerms, sentenceAround } from '../src/core/detect';
 import { KnownTerms, MemoryStore } from '../src/core/known-terms';
 
@@ -47,6 +47,34 @@ describe('detectTerms', () => {
     const known = new KnownTerms(new MemoryStore());
     await known.add('lockfile');
     expect(countTerms('The linter and the lockfile.', known)).toEqual({ shown: 1, hidden: 1 });
+  });
+
+  it('counts only overlap winners and checks repeated occurrences in text order', () => {
+    const known = { has: vi.fn((term: string) => term === 'ci pipeline' || term === 'lockfile') };
+    const result = countTerms('A `CI pipeline`, lockfile, linter and another lockfile.', known);
+    expect(result).toEqual({ shown: 1, hidden: 3 });
+    expect(known.has.mock.calls).toEqual([['ci pipeline'], ['lockfile'], ['linter'], ['lockfile']]);
+  });
+
+  it('does not query known terms when the input has no hits', () => {
+    const known = { has: vi.fn(() => false) };
+    expect(countTerms('Take a walk.', known)).toEqual({ shown: 0, hidden: 0 });
+    expect(known.has).not.toHaveBeenCalled();
+  });
+
+  it('scans text only once when counting terms', () => {
+    const text = 'The CI pipeline and the lockfile.';
+    const matchAll = vi.spyOn(String.prototype, 'matchAll');
+    try {
+      detectTerms(text);
+      const singleScan = matchAll.mock.calls.length;
+      expect(singleScan).toBeGreaterThan(0);
+      matchAll.mockClear();
+      countTerms(text, { has: () => false });
+      expect(matchAll.mock.calls.length).toBe(singleScan);
+    } finally {
+      matchAll.mockRestore();
+    }
   });
 });
 

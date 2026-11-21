@@ -104,7 +104,10 @@ export function sentenceAround(text: string, start: number, end: number, maxChar
 
 /** How many highlighted terms are in this text, and how many were skipped because they are known. */
 export function countTerms(text: string, known: { has(term: string): boolean }): { shown: number; hidden: number } {
-  const shown = detectTerms(text, known).length;
-  const all = detectTerms(text).length;
-  return { shown, hidden: all - shown };
+  const hits = detectTerms(text);
+  let hidden = 0;
+  for (const hit of hits) {
+    if (known?.has(hit.term)) hidden += 1;
+  }
+  return { shown: hits.length - hidden, hidden };
 }
