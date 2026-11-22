@@ -22,41 +22,50 @@ const w = window as unknown as { __pemActive?: Active | 'starting' };
 
 async function turnOn(): Promise<void> {
   w.__pemActive = 'starting';
-  await ensureHost();
-  const store = new ChromeStore();
-  const known = new KnownTerms(store);
-  await known.load();
-  const configured = await hostConfigured();
-  const ui: { current?: Margin } = {};
-  const sync = new SyncController(known, store, configured ? () => Promise.resolve(remoteSync) : undefined, () => ui.current?.refresh());
-  await sync.init();
-  const root = document.querySelector<HTMLElement>('main, article, [role="main"]') ?? document.body;
-  const margin = new Margin({
-    root,
-    service: new MarginService(new RemoteAdapter()),
-    known,
-    sync,
-    getWalkthroughText: () => {
-      const picked = window.getSelection()?.toString().trim();
-      return (picked && picked.length > 200 ? picked : root.innerText).slice(0, 20000);
-    },
-  });
-  ui.current = margin;
-  margin.start();
+  let retryable = true;
+  try {
+    await ensureHost();
+    const store = new ChromeStore();
+    const known = new KnownTerms(store);
+    await known.load();
+    const configured = await hostConfigured();
+    const ui: { current?: Margin } = {};
+    const sync = new SyncController(known, store, configured ? () => Promise.resolve(remoteSync) : undefined, () => ui.current?.refresh());
+    await sync.init();
+    // Sync may already have persisted or pushed. Neither it nor the page
+    // mount below can safely be retried after a later startup failure.
+    retryable = false;
+    const root = document.querySelector<HTMLElement>('main, article, [role="main"]') ?? document.body;
+    const margin = new Margin({
+      root,
+      service: new MarginService(new RemoteAdapter()),
+      known,
+      sync,
+      getWalkthroughText: () => {
+        const picked = window.getSelection()?.toString().trim();
+        return (picked && picked.length > 200 ? picked : root.innerText).slice(0, 20000);
+      },
+    });
+    ui.current = margin;
+    margin.start();
 
-  // Pages that stream in new text get re-scanned, quietly, after they settle.
-  let timer = 0;
-  const observer = new MutationObserver((records) => {
-    if (records.every((r) => (r.target as Element).closest?.('#pem-host, .pem-term'))) return;
-    clearTimeout(timer);
-    timer = window.setTimeout(() => {
-      observer.disconnect();
-      margin.scan();
-      observer.observe(root, { childList: true, subtree: true, characterData: true });
-    }, 1000);
-  });
-  observer.observe(root, { childList: true, subtree: true, characterData: true });
-  w.__pemActive = { margin, observer };
+    // Pages that stream in new text get re-scanned, quietly, after they settle.
+    let timer = 0;
+    const observer = new MutationObserver((records) => {
+      if (records.every((r) => (r.target as Element).closest?.('#pem-host, .pem-term'))) return;
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        observer.disconnect();
+        margin.scan();
+        observer.observe(root, { childList: true, subtree: true, characterData: true });
+      }, 1000);
+    });
+    observer.observe(root, { childList: true, subtree: true, characterData: true });
+    w.__pemActive = { margin, observer };
+  } catch {
+    if (retryable) w.__pemActive = undefined;
+    console.error('Plain-English Margin could not start.');
+  }
 }
 
 function turnOff(active: Active): void {
