@@ -35,9 +35,16 @@ const MAX_PLAIN = 400;
 const MAX_WHY = 300;
 const MAX_STEPS = 12;
 
-function parseJson(raw: string): unknown {
-  const trimmed = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
-  return JSON.parse(trimmed);
+function parseObject(raw: string): ParseResult<Record<string, unknown>> {
+  let data: unknown;
+  try {
+    const trimmed = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+    data = JSON.parse(trimmed);
+  } catch {
+    return { ok: false, reason: 'not valid JSON' };
+  }
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return { ok: false, reason: 'not an object' };
+  return { ok: true, value: data as Record<string, unknown> };
 }
 
 function nonEmptyString(v: unknown, max: number): string | undefined {
@@ -55,14 +62,9 @@ function squash(s: string): string {
  * and that term really occurs in the page text. Anything else is rejected, never shown as an explanation.
  */
 export function parseLookup(raw: string, ctx: { term: string; pageText: string }): ParseResult<Lookup> {
-  let data: unknown;
-  try {
-    data = parseJson(raw);
-  } catch {
-    return { ok: false, reason: 'not valid JSON' };
-  }
-  if (!data || typeof data !== 'object' || Array.isArray(data)) return { ok: false, reason: 'not an object' };
-  const o = data as Record<string, unknown>;
+  const parsed = parseObject(raw);
+  if (!parsed.ok) return parsed;
+  const o = parsed.value;
   const term = nonEmptyString(o.term, 80);
   const plain = nonEmptyString(o.plain, MAX_PLAIN);
   if (!term) return { ok: false, reason: 'missing term' };
@@ -77,14 +79,9 @@ export function parseLookup(raw: string, ctx: { term: string; pageText: string }
 }
 
 export function parseWalkthrough(raw: string): ParseResult<Walkthrough> {
-  let data: unknown;
-  try {
-    data = parseJson(raw);
-  } catch {
-    return { ok: false, reason: 'not valid JSON' };
-  }
-  if (!data || typeof data !== 'object' || Array.isArray(data)) return { ok: false, reason: 'not an object' };
-  const o = data as Record<string, unknown>;
+  const parsed = parseObject(raw);
+  if (!parsed.ok) return parsed;
+  const o = parsed.value;
   const summary = nonEmptyString(o.summary, 600);
   if (!summary) return { ok: false, reason: 'missing summary' };
   if (!Array.isArray(o.steps) || o.steps.length === 0 || o.steps.length > MAX_STEPS) {
