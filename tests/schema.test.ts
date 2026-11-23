@@ -52,3 +52,22 @@ describe('parseWalkthrough', () => {
     expect(parseWalkthrough('nope').ok).toBe(false);
   });
 });
+
+describe('shared response envelope', () => {
+  it('preserves the distinction between invalid JSON and a non-object in both parsers', () => {
+    for (const [raw, reason] of [
+      ['', 'not valid JSON'],
+      ['{', 'not valid JSON'],
+      ['true', 'not an object'],
+      ['null', 'not an object'],
+      ['42', 'not an object'],
+      ['"text"', 'not an object'],
+      ['[]', 'not an object'],
+      ['```json\n[{}]\n```', 'not an object'],
+      ['```JSON\nundefined\n```', 'not valid JSON'],
+    ]) {
+      expect(parseLookup(raw, ctx)).toEqual({ ok: false, reason });
+      expect(parseWalkthrough(raw)).toEqual({ ok: false, reason });
+    }
+  });
+});
